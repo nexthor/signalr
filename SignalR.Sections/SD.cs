@@ -12,5 +12,10 @@
             { Stone, 0 },
             { Cloak, 0 }
         };
+
+        public const string Gryffindor = nameof(Gryffindor);
+        public const string Slytherin = nameof(Slytherin);
+        public const string Hufflepuff = nameof(Hufflepuff);
+        public const string Ravenclaw = nameof(Ravenclaw);
     }
 }

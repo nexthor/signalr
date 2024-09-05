@@ -1,0 +1,109 @@
+﻿@{
+    ViewData["Title"] = "Section 4 - Harry Potter House";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row border p-1 mt-3">
+    <h3>Subscribed List: </h3>
+    <hr />
+    <div class="row p-2">
+        <div class="col-3">
+            <label style="color:#B52033" id="lbl_houseJoined">Subscribed House Names</label>
+        </div>
+    </div>
+</div>
+<div class="row border p-1 mt-3">
+    <h3>Subscribe: </h3>
+    <hr />
+    <div class="row p-2">
+        <div class="col-3">
+            <button class="btn" style="background-color:#B52033" id="btn_gryffindor">Gryffindor</button>
+        </div>
+        <div class="col-3">
+            <button class="btn" style="background-color:#236E50" id="btn_slytherin">Slytherin</button>
+        </div>
+        <div class="col-3">
+            <button class="btn" style="background-color:#EDB526" id="btn_hufflepuff">Hufflepuff</button>
+        </div>
+        <div class="col-3">
+            <button class="btn" style="background-color:#10749F" id="btn_ravenclaw">Ravenclaw</button>
+        </div>
+    </div>
+</div>
+<div class="row border p-1 mt-3">
+    <h3>Unsubscribe: </h3>
+    <hr />
+    <div class="row p-2">
+        <div class="col-3">
+            <button class="btn" style="background-color:#B52033;" id="btn_un_gryffindor">Gryffindor</button>
+        </div>
+        <div class="col-3">
+            <button class="btn" style="background-color:#236E50;" id="btn_un_slytherin">Slytherin</button>
+        </div>
+        <div class="col-3">
+            <button class="btn" style="background-color:#EDB526;" id="btn_un_hufflepuff">Hufflepuff</button>
+        </div>
+        <div class="col-3">
+            <button class="btn" style="background-color:#10749F;" id="btn_un_ravenclaw">Ravenclaw</button>
+        </div>
+    </div>
+</div>
+<div class="row border p-1 mt-3">
+    <h3>Trigger Notification: </h3>
+    <hr />
+    <div class="row p-2">
+        <div class="col-3">
+            <button class="btn" style="background-color:#B52033" id="trigger_gryffindor">Gryffindor</button>
+        </div>
+        <div class="col-3">
+            <button class="btn" style="background-color:#236E50" id="trigger_slytherin">Slytherin</button>
+        </div>
+        <div class="col-3">
+            <button class="btn" style="background-color:#EDB526" id="trigger_hufflepuff">Hufflepuff</button>
+        </div>
+        <div class="col-3">
+            <button class="btn" style="background-color:#10749F" id="trigger_ravenclaw">Ravenclaw</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/microsoft-signalr/signalr.min.js"></script>
+
+    <script>
+        // var cloakSpan = document.getElementById("cloakCounter");
+        // var stoneSpan = document.getElementById("stoneCounter");
+        // var wandSpan = document.getElementById("wandCounter");
+        // // 1. create connection
+        // var connection = new signalR.HubConnectionBuilder().withUrl("/hubs/deathlyHallows").build();
+
+        // // 2. connect to methods that hub invokes aka receive n otifications from hub
+        // connection.on("updateDeathlyHallowCount", (cloak, stone, wand) => {
+        //     cloakSpan.innerText = cloak;
+        //     stoneSpan.innerText = stone;
+        //     wandSpan.innerText = wand;
+        // });
+
+        // // 3. invoke hub methods aka send notification to hub
+        // function GetRaceStatusFromHub() {
+        //     connection.invoke("GetRaceStatus")
+        //         .then((raceCounter) => {
+        //             cloakSpan.innerText = raceCounter["Cloak"];
+        //             stoneSpan.innerText = raceCounter["Stone"];
+        //             wandSpan.innerText = raceCounter["Wand"];
+        //         })
+        //         .catch(function (err) {
+        //             return console.error(err.toString());
+        //         });
+        // }
+
+        // // 4. start connection
+        // connection.start().then(function () {
+        //     console.log("Connected to the hub");
+        //     GetRaceStatusFromHub();
+        // }).catch(function (err) {
+        //     return console.error(err.toString());
+        // });
+    </script>
+}
