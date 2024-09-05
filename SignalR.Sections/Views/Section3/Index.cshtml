@@ -1,11 +1,10 @@
 ﻿@{
-    ViewData["Title"] = "Section 3";
+    ViewData["Title"] = "Section 3 &mdash; Deathly Hallow Race";
 }
 
 <h2>@ViewData["Title"]</h2>
 
-<div class="row border p-1">
-    <h3>Deathly Hallow Race </h3>
+<div class="row border p-3">
     <div class="col-4">
         <div>Invisibility Cloak - <span id="cloakCounter"></span></div>
 
@@ -20,7 +19,47 @@
     </div>
     <hr />
     <p>Url to Vote:</p>
-    <div>1. Invisibility Cloak - https://localhost:7001/Home/DeathlyHallows?type=Cloak </div>
-    <div>2. Resurrection Stone - https://localhost:7001/Home/DeathlyHallows?type=Stone </div>
-    <div>3. Elder Wand - https://localhost:7001/Home/DeathlyHallows?type=Wand </div>
+    <div>1. Invisibility Cloak - https://localhost:7001/Section3/DeathlyHallows?type=Cloak </div>
+    <div>2. Resurrection Stone - https://localhost:7001/Section3/DeathlyHallows?type=Stone </div>
+    <div>3. Elder Wand - https://localhost:7001/Section3/DeathlyHallows?type=Wand </div>
 </div>
+
+@section Scripts {
+    <script src="~/lib/microsoft-signalr/signalr.min.js"></script>
+
+    <script>
+        var cloakSpan = document.getElementById("cloakCounter");
+        var stoneSpan = document.getElementById("stoneCounter");
+        var wandSpan = document.getElementById("wandCounter");
+        // 1. create connection
+        var connection = new signalR.HubConnectionBuilder().withUrl("/hubs/deathlyHallows").build();
+
+        // 2. connect to methods that hub invokes aka receive n otifications from hub
+        connection.on("updateDeathlyHallowCount", (cloak, stone, wand) => {
+            cloakSpan.innerText = cloak;
+            stoneSpan.innerText = stone;
+            wandSpan.innerText = wand;
+        });
+
+        // 3. invoke hub methods aka send notification to hub
+        function GetRaceStatusFromHub() {
+            connection.invoke("GetRaceStatus")
+                .then((raceCounter) => {
+                    cloakSpan.innerText = raceCounter["Cloak"];
+                    stoneSpan.innerText = raceCounter["Stone"];
+                    wandSpan.innerText = raceCounter["Wand"];
+                })
+                .catch(function (err) {
+                    return console.error(err.toString());
+                });
+        }
+
+        // 4. start connection
+        connection.start().then(function () {
+            console.log("Connected to the hub");
+            GetRaceStatusFromHub();
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+    </script>
+}
