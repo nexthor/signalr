@@ -8,7 +8,7 @@
     <h3>Subscribed List: </h3>
     <hr />
     <div class="row p-2">
-        <div class="col-3">
+        <div class="col-12">
             <label style="color:#B52033" id="lbl_houseJoined">Subscribed House Names</label>
         </div>
     </div>
@@ -18,16 +18,16 @@
     <hr />
     <div class="row p-2">
         <div class="col-3">
-            <button class="btn" style="background-color:#B52033" id="btn_gryffindor">Gryffindor</button>
+            <button class="btn btn-danger" id="btn_gryffindor">Gryffindor</button>
         </div>
         <div class="col-3">
-            <button class="btn" style="background-color:#236E50" id="btn_slytherin">Slytherin</button>
+            <button class="btn btn-info" id="btn_slytherin">Slytherin</button>
         </div>
         <div class="col-3">
-            <button class="btn" style="background-color:#EDB526" id="btn_hufflepuff">Hufflepuff</button>
+            <button class="btn btn-success" id="btn_hufflepuff">Hufflepuff</button>
         </div>
         <div class="col-3">
-            <button class="btn" style="background-color:#10749F" id="btn_ravenclaw">Ravenclaw</button>
+            <button class="btn btn-warning" id="btn_ravenclaw">Ravenclaw</button>
         </div>
     </div>
 </div>
@@ -36,16 +36,16 @@
     <hr />
     <div class="row p-2">
         <div class="col-3">
-            <button class="btn" style="background-color:#B52033;" id="btn_un_gryffindor">Gryffindor</button>
+            <button class="btn btn-danger d-none" id="btn_un_gryffindor">Gryffindor</button>
         </div>
         <div class="col-3">
-            <button class="btn" style="background-color:#236E50;" id="btn_un_slytherin">Slytherin</button>
+            <button class="btn btn-info d-none" id="btn_un_slytherin">Slytherin</button>
         </div>
         <div class="col-3">
-            <button class="btn" style="background-color:#EDB526;" id="btn_un_hufflepuff">Hufflepuff</button>
+            <button class="btn btn-success d-none" id="btn_un_hufflepuff">Hufflepuff</button>
         </div>
         <div class="col-3">
-            <button class="btn" style="background-color:#10749F;" id="btn_un_ravenclaw">Ravenclaw</button>
+            <button class="btn btn-warning d-none" id="btn_un_ravenclaw">Ravenclaw</button>
         </div>
     </div>
 </div>
@@ -54,56 +54,146 @@
     <hr />
     <div class="row p-2">
         <div class="col-3">
-            <button class="btn" style="background-color:#B52033" id="trigger_gryffindor">Gryffindor</button>
+            <button class="btn btn-danger" id="trigger_gryffindor">Gryffindor</button>
         </div>
         <div class="col-3">
-            <button class="btn" style="background-color:#236E50" id="trigger_slytherin">Slytherin</button>
+            <button class="btn btn-info" id="trigger_slytherin">Slytherin</button>
         </div>
         <div class="col-3">
-            <button class="btn" style="background-color:#EDB526" id="trigger_hufflepuff">Hufflepuff</button>
+            <button class="btn btn-success" id="trigger_hufflepuff">Hufflepuff</button>
         </div>
         <div class="col-3">
-            <button class="btn" style="background-color:#10749F" id="trigger_ravenclaw">Ravenclaw</button>
+            <button class="btn btn-warning" id="trigger_ravenclaw">Ravenclaw</button>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script src="~/lib/microsoft-signalr/signalr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
-        // var cloakSpan = document.getElementById("cloakCounter");
-        // var stoneSpan = document.getElementById("stoneCounter");
-        // var wandSpan = document.getElementById("wandCounter");
-        // // 1. create connection
-        // var connection = new signalR.HubConnectionBuilder().withUrl("/hubs/deathlyHallows").build();
+        let lbl_houseJoined = document.getElementById("lbl_houseJoined");
+        // unsubscribe
+        let btn_un_gryffindor = document.getElementById("btn_un_gryffindor");
+        let btn_un_slytherin = document.getElementById("btn_un_slytherin");
+        let btn_un_hufflepuff = document.getElementById("btn_un_hufflepuff");
+        let btn_un_ravenclaw = document.getElementById("btn_un_ravenclaw");
+        // subscribe
+        let btn_gryffindor = document.getElementById("btn_gryffindor");
+        let btn_slytherin = document.getElementById("btn_slytherin");
+        let btn_hufflepuff = document.getElementById("btn_hufflepuff");
+        let btn_ravenclaw = document.getElementById("btn_ravenclaw");
+        // trigger
+        let trigger_gryffindor = document.getElementById("trigger_gryffindor");
+        let trigger_slytherin = document.getElementById("trigger_slytherin");
+        let trigger_hufflepuff = document.getElementById("trigger_hufflepuff");
+        let trigger_ravenclaw = document.getElementById("trigger_ravenclaw");
+        
+        let houses = [];
 
-        // // 2. connect to methods that hub invokes aka receive n otifications from hub
-        // connection.on("updateDeathlyHallowCount", (cloak, stone, wand) => {
-        //     cloakSpan.innerText = cloak;
-        //     stoneSpan.innerText = stone;
-        //     wandSpan.innerText = wand;
-        // });
+        // 1. create connection
+        var connection = new signalR.HubConnectionBuilder().withUrl("/hubs/houseGroup").build();
 
-        // // 3. invoke hub methods aka send notification to hub
-        // function GetRaceStatusFromHub() {
-        //     connection.invoke("GetRaceStatus")
-        //         .then((raceCounter) => {
-        //             cloakSpan.innerText = raceCounter["Cloak"];
-        //             stoneSpan.innerText = raceCounter["Stone"];
-        //             wandSpan.innerText = raceCounter["Wand"];
-        //         })
-        //         .catch(function (err) {
-        //             return console.error(err.toString());
-        //         });
-        // }
+        // 2. connect to methods that hub invokes aka receive n otifications from hub
 
-        // // 4. start connection
-        // connection.start().then(function () {
-        //     console.log("Connected to the hub");
-        //     GetRaceStatusFromHub();
-        // }).catch(function (err) {
-        //     return console.error(err.toString());
-        // });
+        // listeners
+        btn_gryffindor.addEventListener("click", function (event) {
+            connection.invoke("JoinGroup", "Gryffindor");
+            btn_un_gryffindor.classList.remove("d-none");
+
+            houses.push("Gryffindor");
+            updateLabel();
+            event.preventDefault();
+        });
+
+        btn_slytherin.addEventListener("click", function (event) {
+            connection.invoke("JoinGroup", "Slytherin");
+            btn_un_slytherin.classList.remove("d-none");
+
+            houses.push("Slytherin");
+            updateLabel();
+            event.preventDefault();
+        });
+
+        btn_hufflepuff.addEventListener("click", function (event) {
+            connection.invoke("JoinGroup", "Hufflepuff");
+            btn_un_hufflepuff.classList.remove("d-none");
+
+            houses.push("Hufflepuff");
+            updateLabel();
+            event.preventDefault();
+        });
+
+        btn_ravenclaw.addEventListener("click", function (event) {
+            connection.invoke("JoinGroup", "Ravenclaw");
+            btn_un_ravenclaw.classList.remove("d-none");
+
+            houses.push("Ravenclaw");
+            updateLabel();
+            event.preventDefault();
+        });
+
+        btn_un_gryffindor.addEventListener("click", (event) => {
+            connection.invoke("LeaveGroup", "Gryffindor");
+            btn_un_gryffindor.classList.add("d-none");
+
+            removeHouse("Gryffindor");
+            event.preventDefault();
+        });
+
+        btn_un_slytherin.addEventListener("click", (event) => {
+            connection.invoke("LeaveGroup", "Slytherin");
+            btn_un_slytherin.classList.add("d-none");
+
+            removeHouse("Slytherin");
+            event.preventDefault();
+        });
+
+        btn_un_hufflepuff.addEventListener("click", (event) => {
+            connection.invoke("LeaveGroup", "Hufflepuff");
+            btn_un_hufflepuff.classList.add("d-none");
+
+            removeHouse("Hufflepuff");
+            event.preventDefault();
+        });
+
+        btn_un_ravenclaw.addEventListener("click", (event) => {
+            connection.invoke("LeaveGroup", "Ravenclaw");
+            btn_un_ravenclaw.classList.add("d-none");
+
+            removeHouse("Ravenclaw");
+            event.preventDefault();
+        });
+
+        function removeHouse(houseName) {
+            var index = houses.indexOf(houseName);
+            if (index > -1) {
+                houses.splice(index, 1);
+            }
+            updateLabel();
+        }
+
+        function updateLabel() {
+            lbl_houseJoined.innerHTML = houses.length ? houses.join(", ") : "Subscribed House Names";
+        }
+
+        // 3. invoke hub methods aka send notification to hub
+        function fulfilled(){
+            console.log("connection established");
+        }
+
+        function rejected(){
+
+        }
+
+        connection.on("subscriptionStatus", (strGoupsJoined, houseName, hasSubscribed) => {
+            if (hasSubscribed) {
+                lbl_houseJoined.innerHTML = strGoupsJoined;
+            }
+        });
+
+        // 4. start connection
+        connection.start().then(fulfilled, rejected);
     </script>
 }
