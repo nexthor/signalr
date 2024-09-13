@@ -68,6 +68,10 @@
     </div>
 </div>
 
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+}
+
 @section Scripts {
     <script src="~/lib/microsoft-signalr/signalr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -98,73 +102,51 @@
         // 2. connect to methods that hub invokes aka receive n otifications from hub
 
         // listeners
-        btn_gryffindor.addEventListener("click", function (event) {
-            connection.invoke("JoinGroup", "Gryffindor");
-            btn_un_gryffindor.classList.remove("d-none");
+        function SubscribeAction(subsEl, unsubEl, houseName){
+            subsEl.addEventListener("click", function (event) {
+                connection.invoke("JoinGroup", houseName);
+                unsubEl.classList.remove("d-none");
 
-            houses.push("Gryffindor");
-            updateLabel();
-            event.preventDefault();
-        });
+                houses.push(houseName);
+                updateLabel();
+                toastr.success("You have been subscribed to " + houseName);
+                event.preventDefault();
+            });
+        }
 
-        btn_slytherin.addEventListener("click", function (event) {
-            connection.invoke("JoinGroup", "Slytherin");
-            btn_un_slytherin.classList.remove("d-none");
+        function UnsubscribeAction(unsubEl, houseName){
+            unsubEl.addEventListener("click", (event) => {
+                connection.invoke("LeaveGroup", houseName);
+                unsubEl.classList.add("d-none");
 
-            houses.push("Slytherin");
-            updateLabel();
-            event.preventDefault();
-        });
+                removeHouse(houseName);
+                toastr.warning("You have been unsubscribed from " + houseName);
+                event.preventDefault();
+            });
+        }
 
-        btn_hufflepuff.addEventListener("click", function (event) {
-            connection.invoke("JoinGroup", "Hufflepuff");
-            btn_un_hufflepuff.classList.remove("d-none");
+        function TriggerHouseNotification(triggerEl, houseName) {
+            triggerEl.addEventListener("click", (event) => {
+                connection.invoke("TriggerHouseNotify", houseName);
+                toastr.info("Notification has been triggered for " + houseName);
+                event.preventDefault();
+            });
+        }
 
-            houses.push("Hufflepuff");
-            updateLabel();
-            event.preventDefault();
-        });
+        SubscribeAction(btn_gryffindor, btn_un_gryffindor, "Gryffindor");
+        SubscribeAction(btn_slytherin, btn_un_slytherin, "Slytherin");
+        SubscribeAction(btn_hufflepuff, btn_un_hufflepuff, "Hufflepuff");
+        SubscribeAction(btn_ravenclaw, btn_un_ravenclaw, "Ravenclaw");
 
-        btn_ravenclaw.addEventListener("click", function (event) {
-            connection.invoke("JoinGroup", "Ravenclaw");
-            btn_un_ravenclaw.classList.remove("d-none");
+        UnsubscribeAction(btn_un_gryffindor, "Gryffindor");
+        UnsubscribeAction(btn_un_slytherin, "Slytherin");
+        UnsubscribeAction(btn_un_hufflepuff, "Hufflepuff");
+        UnsubscribeAction(btn_un_ravenclaw, "Ravenclaw");
 
-            houses.push("Ravenclaw");
-            updateLabel();
-            event.preventDefault();
-        });
-
-        btn_un_gryffindor.addEventListener("click", (event) => {
-            connection.invoke("LeaveGroup", "Gryffindor");
-            btn_un_gryffindor.classList.add("d-none");
-
-            removeHouse("Gryffindor");
-            event.preventDefault();
-        });
-
-        btn_un_slytherin.addEventListener("click", (event) => {
-            connection.invoke("LeaveGroup", "Slytherin");
-            btn_un_slytherin.classList.add("d-none");
-
-            removeHouse("Slytherin");
-            event.preventDefault();
-        });
-
-        btn_un_hufflepuff.addEventListener("click", (event) => {
-            connection.invoke("LeaveGroup", "Hufflepuff");
-            btn_un_hufflepuff.classList.add("d-none");
-
-            removeHouse("Hufflepuff");
-            event.preventDefault();
-        });
-
-        btn_un_ravenclaw.addEventListener("click", (event) => {
-            connection.invoke("LeaveGroup", "Ravenclaw");
-            btn_un_ravenclaw.classList.add("d-none");
-
-            removeHouse("Ravenclaw");
-            event.preventDefault();
-        });
+        TriggerHouseNotification(trigger_gryffindor, "Gryffindor");
+        TriggerHouseNotification(trigger_slytherin, "Slytherin");
+        TriggerHouseNotification(trigger_hufflepuff, "Hufflepuff");
+        TriggerHouseNotification(trigger_ravenclaw, "Ravenclaw");
 
         function removeHouse(houseName) {
             var index = houses.indexOf(houseName);
@@ -188,10 +170,21 @@
         }
 
         connection.on("subscriptionStatus", (strGoupsJoined, houseName, hasSubscribed) => {
-            if (hasSubscribed) {
+            if (hasSubscribed)
                 lbl_houseJoined.innerHTML = strGoupsJoined;
-            }
         });
+
+        connection.on("newMemberAddedFromHouse", (houseName => {
+            toastr.info("New member added to " + houseName);
+        }));
+
+        connection.on("newMemberRemovedFromHouse", (houseName => {
+            toastr.warning("A member were removed from " + houseName);
+        }));
+
+        connection.on("triggerHouseNotification", (houseName => {
+            toastr.warning(`A new notification for ${houseName} has been launched.`);
+        }));
 
         // 4. start connection
         connection.start().then(fulfilled, rejected);
