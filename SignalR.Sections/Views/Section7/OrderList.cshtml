@@ -10,7 +10,7 @@
             <h2 class="text-primary">Order List</h2>
         </div>
         <div class="col-6 text-end">
-            <a asp-action="Create" class="btn btn-primary">Create Order</a>
+            <a asp-action="Order" class="btn btn-primary">Create Order</a>
         </div>
     </div>
     <br /><br />
@@ -28,14 +28,27 @@
     </table>
 </div>
 
+@section Styles {
+    <link href="~/lib/datatables/css/datatables.bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+}
+
 @section Scripts {
-    <script src="~/lib/datatables/js/datatables.bootstrap.min.js"></script>
+    <script src="~/lib/microsoft-signalr/signalr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="~/lib/datatables/js/jquery.datatables.min.js"></script>
+    <script src="~/lib/datatables/js/datatables.bootstrap.min.js"></script>
     <script>
+        var dataTable;
+
         $(document).ready(function () {
-            $('#tblData').DataTable({
+            loadDataTable();
+        });
+
+        function loadDataTable() {
+            dataTable = $('#tblData').DataTable({
                 "ajax": {
-                    "url": "/Orders/GetOrders",
+                    "url": "/Section7/GetAllOrder",
                     "type": "GET",
                     "datatype": "json"
                 },
@@ -51,6 +64,23 @@
                     }
                 ]
             });
+        }
+
+        var connection = new signalR.HubConnectionBuilder().withUrl("/hubs/orderUpdateHub").build();
+
+        connection.on("newOrder", function () {
+            dataTable.ajax.reload();
+            toastr.success("New Order Received");
         });
+
+        function fulfilled() {
+            console.log("connection established");
+        }
+
+        function rejected() {
+
+        }
+
+        connection.start().then(fulfilled, rejected);
     </script>
 }

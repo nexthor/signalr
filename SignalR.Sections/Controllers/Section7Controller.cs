@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using SignalR.Sections.Data;
+using SignalR.Sections.Hubs;
 using SignalR.Sections.Models;
 
 namespace SignalR.Sections.Controllers
 {
-    public class Section7Controller(ApplicationDbContext context) : Controller
+    public class Section7Controller(ApplicationDbContext context, IHubContext<OrderUpdateHub> orderHub) : Controller
     {
         private readonly ApplicationDbContext _context = context;
+        private readonly IHubContext<OrderUpdateHub> _orderHub = orderHub;
 
         [ActionName("Order")]
         public IActionResult Order()
@@ -35,6 +38,7 @@ namespace SignalR.Sections.Controllers
         {
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
+            await _orderHub.Clients.All.SendAsync("newOrder");
             return RedirectToAction(nameof(Order));
         }
 
