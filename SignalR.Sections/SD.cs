@@ -17,5 +17,6 @@
         public const string Slytherin = nameof(Slytherin);
         public const string Hufflepuff = nameof(Hufflepuff);
         public const string Ravenclaw = nameof(Ravenclaw);
+        public static string CurrentUrl = string.Empty;
     }
 }
